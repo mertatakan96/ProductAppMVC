@@ -17,6 +17,14 @@ namespace ProductAppMVC.Controllers
             this._context = dbContext;
         }
 
+        [HttpGet]
+        public IActionResult GetProducts()
+        {
+            var products = _context.Products.ToList();
+
+            return Ok(products);
+        }
+
         [HttpGet("{productId}")]
         public IActionResult GetProduct(int productId)
         {
