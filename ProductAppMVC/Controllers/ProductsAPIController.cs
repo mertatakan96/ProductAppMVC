@@ -20,9 +20,17 @@ namespace ProductAppMVC.Controllers
         [HttpGet]
         public IActionResult GetProducts()
         {
-            var products = _context.Products.ToList();
+            var products = _context.Products.Include(p => p.Inventory).ToList();
 
-            return Ok(products);
+            var productDtos = products.Select(p => new GetProductsDto
+            {
+                ProductId = p.ProductId,
+                ProductName = p.ProductName,
+                ProductDescription = p.ProductDescription,
+                StockLevel = p.Inventory.StockLevel
+            }).ToList();
+
+            return Ok(productDtos);
         }
 
         [HttpGet("{productId}")]
