@@ -88,19 +88,26 @@ namespace ProductAppMVC.Controllers
         [HttpPatch("{productId}")]
         public IActionResult UpdateStockLevel(int productId, [FromBody] StockLevelDto stockLevelDto)
         {
-            var product = _context.Products.Include(p => p.Inventory).FirstOrDefault(p => p.ProductId == productId);
+            var product = _context.Products.Include(p => p.Inventory).AsNoTracking().FirstOrDefault(p => p.ProductId == productId);
             if (product == null)
             {
                 return NotFound();
             }
 
+            var inventoryToUpdate = _context.Inventories.FirstOrDefault(i => i.InventoryId == product.Inventory.InventoryId);
+            if (inventoryToUpdate == null)
+            {
+                return NotFound("Inventory not found for the given product.");
+            }
 
-            product.Inventory.StockLevel = stockLevelDto.StockLevel;
+            inventoryToUpdate.StockLevel = stockLevelDto.StockLevel;
 
-            _context.Update(product);
+            _context.Update(inventoryToUpdate);
             _context.SaveChanges();
-            return Ok(product);
+
+            return Ok("Updated");
         }
+
 
     }
 }
