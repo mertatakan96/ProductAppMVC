@@ -43,10 +43,23 @@
                         caption: "Product ID",
                         allowEditing: false
                     },
-                    "productName",
-                    "productDescription",
-                    "stockLevel"
+                    {
+                        dataField: "productName",
+                        caption: "Product Name",
+                        validationRules: [{ type: "required", message: "Product name is required." }]
+                    },
+                    {
+                        dataField: "productDescription",
+                        caption: "Product Description",
+                        validationRules: [{ type: "required", message: "Product description is required." }]
+                    },
+                    {
+                        dataField: "stockLevel",
+                        caption: "Stock Level",
+                        validationRules: [{ type: "required", message: "Stock level is required." }]
+                    }
                 ],
+
                 paging: {
                     pageSize: 10
                 },
