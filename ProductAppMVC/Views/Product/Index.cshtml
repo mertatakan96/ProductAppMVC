@@ -1,0 +1,58 @@
+﻿@{
+    ViewData["Title"] = "Products";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Products</h1>
+
+    <div id="gridContainer"></div>
+
+    <script>
+        $(function () {
+            $("#gridContainer").dxDataGrid({
+                dataSource: {
+                    load: function () {
+                        return $.ajax({
+                            url: "/api/ProductsAPI",
+                            method: "GET"
+                        });
+                    },
+                    update: function (key, values) {
+                        return $.ajax({
+                            url: "/api/ProductsAPI/" + key,
+                            method: "PUT",
+                            data: values
+                        });
+                    }
+                },
+                columns: [
+                    {
+                        dataField: "productId",
+                        caption: "Product ID",
+                        allowEditing: false
+                    },
+                    "productName",
+                    "productDescription",
+                    "stockLevel"
+                ],
+                paging: {
+                    pageSize: 10
+                },
+                filterRow: {
+                    visible: true
+                },
+                groupPanel: {
+                    visible: true
+                },
+                sorting: {
+                    mode: "multiple"
+                },
+                editing: {
+                    mode: "row",
+                    allowUpdating: true
+                }
+            });
+
+        });
+    </script>
+</div>
