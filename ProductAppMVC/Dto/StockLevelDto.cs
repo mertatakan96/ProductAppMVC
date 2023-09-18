@@ -2,5 +2,6 @@
 {
     public class StockLevelDto
     {
+        public int StockLevel { get; set; }
     }
 }

@@ -38,13 +38,13 @@ namespace ProductAppMVC.Controllers
                 ProductDescription = productDto.ProductDescription,
                 Inventory = new Inventory
                 {
-                    StockLevel = productDto.Inventory.StockLevel,
+                    StockLevel = 0,
                 }
             };
             _context.Add(product);
             _context.SaveChanges();
 
-            return StatusCode(201);
+            return StatusCode(201, product);
         }
         [HttpPut("{productId}")]
         public IActionResult UpdateProduct(int productId, [FromBody] ProductDto productDto)
@@ -56,20 +56,28 @@ namespace ProductAppMVC.Controllers
                 return NotFound();
             }
 
-            var product = new Product
-            { 
-                ProductId = productId,
-                ProductName = productDto.ProductName,
-                ProductDescription = productDto.ProductDescription,
-            };
-            _context.Update(product);
+            updateProduct.ProductName = productDto.ProductName;
+            updateProduct.ProductDescription = productDto.ProductDescription;
+
+            _context.Update(updateProduct);
             _context.SaveChanges();
 
-            return Ok();
+            return Ok(updateProduct);
         }
         [HttpPatch("{productId}")]
         public IActionResult UpdateStockLevel(int productId, [FromBody] StockLevelDto stockLevelDto)
         {
+            var product = _context.Products.FirstOrDefault(p => p.ProductId == productId);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            product.Inventory.StockLevel = stockLevelDto.StockLevel;
+
+            _context.Update(product);
+            _context.SaveChanges();
+            return Ok(product);
         }
     }
 }
