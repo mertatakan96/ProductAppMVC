@@ -18,12 +18,24 @@
                         });
                     },
                     update: function (key, values) {
+                        var url, method;
+
+                        if (values.stockLevel !== undefined) {
+                            url = "/api/ProductsAPI/" + key.productId;
+                            method = "PATCH";
+                        } else {
+                            url = "/api/ProductsAPI/" + key.productId;
+                            method = "PUT";
+                        }
+
                         return $.ajax({
-                            url: "/api/ProductsAPI/" + key,
-                            method: "PUT",
-                            data: values
+                            url: url,
+                            method: method,
+                            data: JSON.stringify(values),
+                            contentType: "application/json"
                         });
                     }
+
                 },
                 columns: [
                     {

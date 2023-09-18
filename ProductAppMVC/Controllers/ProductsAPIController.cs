@@ -65,29 +65,35 @@ namespace ProductAppMVC.Controllers
         [HttpPut("{productId}")]
         public IActionResult UpdateProduct(int productId, [FromBody] ProductDto productDto)
         {
-            Product updateProduct = _context.Products.FirstOrDefault(p => p.ProductId == productId);
+            var existingProduct = _context.Products.AsNoTracking().FirstOrDefault(p => p.ProductId == productId);
 
-            if (updateProduct == null)
+            if (existingProduct == null)
             {
                 return NotFound();
             }
 
-            updateProduct.ProductName = productDto.ProductName;
-            updateProduct.ProductDescription = productDto.ProductDescription;
+            var updatedProduct = new Product
+            {
+                ProductId = productId,
+                ProductName = productDto.ProductName ?? existingProduct.ProductName,
+                ProductDescription = productDto.ProductDescription ?? existingProduct.ProductDescription
+            };
 
-            _context.Update(updateProduct);
+            _context.Update(updatedProduct);
             _context.SaveChanges();
 
-            return Ok(updateProduct);
+            return Ok(updatedProduct);
         }
+
         [HttpPatch("{productId}")]
         public IActionResult UpdateStockLevel(int productId, [FromBody] StockLevelDto stockLevelDto)
         {
-            var product = _context.Products.FirstOrDefault(p => p.ProductId == productId);
+            var product = _context.Products.Include(p => p.Inventory).FirstOrDefault(p => p.ProductId == productId);
             if (product == null)
             {
                 return NotFound();
             }
+
 
             product.Inventory.StockLevel = stockLevelDto.StockLevel;
 
@@ -95,5 +101,6 @@ namespace ProductAppMVC.Controllers
             _context.SaveChanges();
             return Ok(product);
         }
+
     }
 }
